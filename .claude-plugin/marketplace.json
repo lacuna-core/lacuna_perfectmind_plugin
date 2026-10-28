@@ -1,0 +1,14 @@
+{
+  "name": "perfectmind",
+  "owner": {
+    "name": "Lacuna",
+    "email": "lacuna.core@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "perfectmind",
+      "source": "./",
+      "description": "Look up City of Markham drop-in programs (currently lane swims) on the PerfectMind booking site."
+    }
+  ]
+}
