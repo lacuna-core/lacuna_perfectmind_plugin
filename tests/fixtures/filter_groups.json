@@ -1,0 +1,411 @@
+{
+ "filterGroups": [
+  {
+   "GroupName": "Keyword",
+   "GroupPluralName": null,
+   "FilterGroupOrder": null,
+   "FilterGroupKind": 9,
+   "Values": [
+    {
+     "Name": "Keyword",
+     "ReadableName": null,
+     "Value": null,
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 9,
+     "Children": null
+    }
+   ],
+   "Visible": false
+  },
+  {
+   "GroupName": "Location",
+   "GroupPluralName": "All Locations",
+   "FilterGroupOrder": null,
+   "FilterGroupKind": 5,
+   "Values": [
+    {
+     "Name": "Aaniin Community Centre",
+     "ReadableName": null,
+     "Value": "e2b754d9-4a5e-4707-985d-8900245143cf",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Angus Glen Community Centre",
+     "ReadableName": null,
+     "Value": "57cc2739-7141-4f95-8007-1ce0e58200e8",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Centennial Community Centre",
+     "ReadableName": null,
+     "Value": "24aabf35-2081-4875-b852-095857be8312",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Cornell Community Centre",
+     "ReadableName": null,
+     "Value": "4f3b6f8b-59cb-4f9f-a5c1-c625958fbe9c",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Cornell Community Park",
+     "ReadableName": null,
+     "Value": "bd581091-753b-4f94-83c0-d0981784d231",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Cornell Library",
+     "ReadableName": null,
+     "Value": "11d003d0-0ff3-4147-a8d3-a26e9c2897ce",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Cornell Rouge Wood Park",
+     "ReadableName": null,
+     "Value": "1c0d4420-b67d-41bb-9ff7-a9679dea1dd1",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Cornell Village Public School",
+     "ReadableName": null,
+     "Value": "622f7acb-c6c3-48c7-b777-4e9643d41696",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Milliken Mills Community Centre",
+     "ReadableName": null,
+     "Value": "68cabb88-b407-4f76-9c47-2d39f0604738",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Milliken Mills Community Park",
+     "ReadableName": null,
+     "Value": "5d6ddf09-9356-45a8-a664-8e2793d1c5a8",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Pan Am Centre",
+     "ReadableName": null,
+     "Value": "f89e4790-9340-4601-99b6-2d5571ab92da",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Thornlea Pool & Gymnasium",
+     "ReadableName": null,
+     "Value": "f59ff258-97bc-4e7c-975d-d6501d76e148",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Thornlea Secondary School",
+     "ReadableName": null,
+     "Value": "10ad9028-047a-4f61-ba8e-7cccdacb0c23",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Thornlea Secondary School Field",
+     "ReadableName": null,
+     "Value": "f039e45f-0de0-45e5-aced-d6569a40e521",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    },
+    {
+     "Name": "Upper Cornell Park",
+     "ReadableName": null,
+     "Value": "93545f4f-8241-485b-9f76-b2d023db8c11",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 5,
+     "Children": null
+    }
+   ],
+   "Visible": true
+  },
+  {
+   "GroupName": "Service",
+   "GroupPluralName": "All Services",
+   "FilterGroupOrder": null,
+   "FilterGroupKind": 2,
+   "Values": [
+    {
+     "Name": "Drop-In Endurance Lane Swim",
+     "ReadableName": null,
+     "Value": "85827232-726a-4a42-ab75-481f28bad9f6",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 2,
+     "Children": null
+    },
+    {
+     "Name": "Drop-In Lane Swim",
+     "ReadableName": null,
+     "Value": "76ea69ad-c0ac-4a77-b73e-7cb886129b27",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 2,
+     "Children": null
+    },
+    {
+     "Name": "Drop-In Parent & Tot Swim",
+     "ReadableName": null,
+     "Value": "a8c0fa6f-2b6f-45be-b121-2fb488ad1379",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 2,
+     "Children": null
+    },
+    {
+     "Name": "Drop-In Parent & Tot Swim, for ladies",
+     "ReadableName": null,
+     "Value": "7bf11022-c38a-4201-8cc0-3fcb317a6046",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 2,
+     "Children": null
+    },
+    {
+     "Name": "Drop-In Recreational Swim",
+     "ReadableName": null,
+     "Value": "98330ed3-a054-414a-99cd-214271cda42b",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 2,
+     "Children": null
+    },
+    {
+     "Name": "Drop-In Recreational Swim, for ladies",
+     "ReadableName": null,
+     "Value": "162e5e06-beda-4e96-97be-5a3d72cb9610",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 2,
+     "Children": null
+    },
+    {
+     "Name": "Drop-In Sensory Swim with Caregiver",
+     "ReadableName": null,
+     "Value": "5bf81b6e-d3c6-41b1-bed7-35b3ee32eac1",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 2,
+     "Children": null
+    },
+    {
+     "Name": "Drop-In Therapy Swim",
+     "ReadableName": null,
+     "Value": "c431f962-7c27-43ee-baf1-42527e001ec1",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 2,
+     "Children": null
+    }
+   ],
+   "Visible": true
+  },
+  {
+   "GroupName": "Date Range",
+   "GroupPluralName": null,
+   "FilterGroupOrder": null,
+   "FilterGroupKind": 6,
+   "Values": [
+    {
+     "Name": "Date Range",
+     "ReadableName": null,
+     "Value": "28/10/2026",
+     "Value2": "05/06/2027",
+     "Metadata": {
+      "ApplyStartDateLimitation": true
+     },
+     "ValueKind": 6,
+     "Children": null
+    }
+   ],
+   "Visible": true
+  },
+  {
+   "GroupName": "Time Range",
+   "GroupPluralName": null,
+   "FilterGroupOrder": null,
+   "FilterGroupKind": 7,
+   "Values": [
+    {
+     "Name": "Time Range",
+     "ReadableName": null,
+     "Value": null,
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 7,
+     "Children": null
+    }
+   ],
+   "Visible": false
+  },
+  {
+   "GroupName": "Days of week",
+   "GroupPluralName": null,
+   "FilterGroupOrder": null,
+   "FilterGroupKind": 8,
+   "Values": [
+    {
+     "Name": "Monday",
+     "ReadableName": null,
+     "Value": "Monday",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 8,
+     "Children": null
+    },
+    {
+     "Name": "Tuesday",
+     "ReadableName": null,
+     "Value": "Tuesday",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 8,
+     "Children": null
+    },
+    {
+     "Name": "Wednesday",
+     "ReadableName": null,
+     "Value": "Wednesday",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 8,
+     "Children": null
+    },
+    {
+     "Name": "Thursday",
+     "ReadableName": null,
+     "Value": "Thursday",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 8,
+     "Children": null
+    },
+    {
+     "Name": "Friday",
+     "ReadableName": null,
+     "Value": "Friday",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 8,
+     "Children": null
+    },
+    {
+     "Name": "Saturday",
+     "ReadableName": null,
+     "Value": "Saturday",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 8,
+     "Children": null
+    },
+    {
+     "Name": "Sunday",
+     "ReadableName": null,
+     "Value": "Sunday",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 8,
+     "Children": null
+    }
+   ],
+   "Visible": true
+  },
+  {
+   "GroupName": "Age",
+   "GroupPluralName": null,
+   "FilterGroupOrder": null,
+   "FilterGroupKind": 0,
+   "Values": [
+    {
+     "Name": "Age",
+     "ReadableName": null,
+     "Value": null,
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 0,
+     "Children": null
+    }
+   ],
+   "Visible": true
+  },
+  {
+   "GroupName": "Facility",
+   "GroupPluralName": "All Facilities",
+   "FilterGroupOrder": null,
+   "FilterGroupKind": 3,
+   "Values": [
+    {
+     "Name": "Pool: Leisure",
+     "ReadableName": null,
+     "Value": "7770174b-abc7-4a27-b617-284da7728894",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 3,
+     "Children": null
+    },
+    {
+     "Name": "Pool: Therapeutic Pool",
+     "ReadableName": null,
+     "Value": "25a7de52-61f5-4bb5-8106-2d4f25b2f6ca",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 3,
+     "Children": null
+    },
+    {
+     "Name": "Pool: Leisure",
+     "ReadableName": null,
+     "Value": "86087044-90f4-4005-bd47-358285e62d34",
+     "Value2": null,
+     "Metadata": null,
+     "ValueKind": 3,
+     "Children": null
+    }
+   ],
+   "Visible": true
+  }
+ ]
+}
