@@ -35,8 +35,8 @@ async def test_get_classes_encodes_filters(client: PerfectMindClient, site: Fake
     assert form["values[0][Value2]"] == ["x"]
     assert form["values[1][Name]"] == ["Drop-In Lane Swim"]
     assert "values[1][Value2]" not in form
-    assert page.next_key == "2026-11-05"
-    assert page.classes[0].occurrence_date == "20261105"
+    assert page.next_key == "2026-11-07"
+    assert page.classes[0].occurrence_date == "20261107"
 
 
 def test_class_url(client: PerfectMindClient) -> None:

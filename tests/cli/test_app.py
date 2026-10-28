@@ -19,12 +19,12 @@ def test_version() -> None:
     assert __version__ in result.output
 
 
-@pytest.mark.parametrize("args", [["mcp", "--help"], ["swims", "lane", "--help"]])
+@pytest.mark.parametrize("args", [["mcp", "--help"], ["swims", "list", "--help"]])
 def test_subcommand_help(args: list[str]) -> None:
     result = runner.invoke(app, args)
     assert result.exit_code == 0
 
 
 def test_swims_lane_rejects_bad_date() -> None:
-    result = runner.invoke(app, ["swims", "lane", "--date", "not-a-date"])
+    result = runner.invoke(app, ["swims", "list", "--date", "not-a-date"])
     assert result.exit_code == 1

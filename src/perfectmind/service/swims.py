@@ -1,17 +1,28 @@
-"""Drop-in lane swim lookups on top of PerfectMindClient."""
+"""Drop-in swim (lane + recreational) lookups on top of PerfectMindClient."""
 
 import re
 import time as _time
+from collections.abc import Collection
 from datetime import date, datetime
 from typing import Literal
 
+from loguru import logger
 from pydantic import BaseModel
 
 from perfectmind.client.models import FilterGroup, FilterValue, RawClass
 from perfectmind.client.perfectmind import PerfectMindClient
 
 SWIMMING_CALENDAR = "Swimming"
-LANE_SWIM_MARKER = "lane swim"
+
+SwimType = Literal["lane", "endurance_lane", "recreational"]
+# Matched in order against both Program filter names and event names, e.g. "Drop-In Lane Swim",
+# "Drop-in Endurance Lane Swim (25M)", "Drop-In Recreational Swim, for ladies".
+# "endurance lane swim" must come before "lane swim", which it contains.
+SWIM_TYPE_MARKERS: dict[SwimType, str] = {
+    "endurance_lane": "endurance lane swim",
+    "lane": "lane swim",
+    "recreational": "recreational swim",
+}
 
 KIND_PROGRAM = 2
 KIND_DATE_RANGE = 6
@@ -31,6 +42,7 @@ class SwimServiceError(Exception):
 class SwimSession(BaseModel):
     event_id: str
     name: str
+    swim_type: SwimType
     date: date
     start: str  # "HH:MM" 24h local time; plain str so JSON schema has no tz-requiring format
     end: str
@@ -53,6 +65,14 @@ def parse_spots(spots: str | None) -> tuple[BookingStatus, int | None]:
     if m := _SPOTS_LEFT.search(text):
         return "open", int(m.group(1))
     return "not_open", None
+
+
+def classify_swim(name: str) -> SwimType | None:
+    lowered = name.lower()
+    for swim_type, marker in SWIM_TYPE_MARKERS.items():
+        if marker in lowered:
+            return swim_type
+    return None
 
 
 def _parse_time(value: str) -> str:
@@ -97,17 +117,27 @@ class SwimService:
             raise SwimServiceError("Site did not return a date range filter")
         return _parse_site_date(values[0].value), _parse_site_date(values[0].value2)
 
-    async def lane_programs(self) -> list[FilterValue]:
+    async def swim_programs(
+        self, swim_types: Collection[SwimType] | None = None
+    ) -> list[FilterValue]:
+        """Program filter values for the requested swim types (all supported types if empty)."""
+        wanted = set(swim_types or SWIM_TYPE_MARKERS)
         programs = [
             v
             for v in self._group_values(await self._filter_groups(), KIND_PROGRAM)
-            if LANE_SWIM_MARKER in v.name.lower()
+            if classify_swim(v.name) in wanted
         ]
         if not programs:
-            raise SwimServiceError("No lane swim programs found on the Swimming calendar")
+            kinds = " / ".join(sorted(wanted))
+            raise SwimServiceError(f"No {kinds} swim programs found on the Swimming calendar")
         return programs
 
-    async def list_lane_swims(self, day: date, location: str | None = None) -> list[SwimSession]:
+    async def list_swims(
+        self,
+        day: date,
+        location: str | None = None,
+        swim_types: Collection[SwimType] | None = None,
+    ) -> list[SwimSession]:
         first, last = await self.bookable_range()
         if not first <= day <= last:
             raise SwimServiceError(
@@ -118,7 +148,7 @@ class SwimService:
         iso = f"{day.isoformat()}T00:00:00.000Z"
         filters = [
             FilterValue(name="Date Range", value=iso, value2=iso, value_kind=KIND_DATE_RANGE),
-            *await self.lane_programs(),
+            *await self.swim_programs(swim_types),
         ]
         calendar_id = await self._swimming_calendar_id()
         target = day.strftime("%Y%m%d")
@@ -135,20 +165,32 @@ class SwimService:
                 break
             after = page.next_key
 
-        sessions = [self._to_session(c, day) for c in raw]
+        sessions: list[SwimSession] = []
+        for c in raw:
+            kind = classify_swim(c.event_name)
+            if kind is None or (swim_types and kind not in swim_types):
+                # Server already filtered by program, so this means the site renamed something.
+                if kind is None:
+                    logger.warning("Skipping unclassified swim session {!r}", c.event_name)
+                continue
+            sessions.append(self._to_session(c, day, kind))
+
+        what = "swims"
+        if swim_types:
+            what = " / ".join(t.replace("_", " ") for t in sorted(swim_types)) + " swims"
         if location:
             needle = location.strip().lower()
             matched = [s for s in sessions if s.location and needle in s.location.lower()]
             if not matched and sessions:
                 known = sorted({s.location for s in sessions if s.location})
                 raise SwimServiceError(
-                    f"No lane swims at a location matching '{location}' on {day.isoformat()}. "
-                    f"Locations with lane swims that day: {', '.join(known)}"
+                    f"No {what} at a location matching '{location}' on {day.isoformat()}. "
+                    f"Locations with {what} that day: {', '.join(known)}"
                 )
             sessions = matched
         return sorted(sessions, key=lambda s: (s.start, s.location or ""))
 
-    def _to_session(self, c: RawClass, day: date) -> SwimSession:
+    def _to_session(self, c: RawClass, day: date, swim_type: SwimType) -> SwimSession:
         status, spots_left = parse_spots(c.spots)
         address = None
         if c.address and c.address.street:
@@ -157,6 +199,7 @@ class SwimService:
         return SwimSession(
             event_id=c.event_id,
             name=c.event_name,
+            swim_type=swim_type,
             date=day,
             start=_parse_time(c.formatted_start_time),
             end=_parse_time(c.formatted_end_time),

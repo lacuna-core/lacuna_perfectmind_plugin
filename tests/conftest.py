@@ -24,7 +24,7 @@ class FakeSite:
     """Serves recorded PerfectMind responses and records requests."""
 
     classes_pages: list[Any] = field(
-        default_factory=lambda: [load_fixture("classes_lane_20261105.json")]
+        default_factory=lambda: [load_fixture("classes_swims_20261107.json")]
     )
     requests: list[httpx.Request] = field(default_factory=list)
 
