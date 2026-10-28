@@ -1,31 +1,64 @@
 # perfectmind
 
-TODO: one-sentence project description.
+A Claude Code plugin for the [City of Markham PerfectMind booking site](https://cityofmarkham.perfectmind.com). It has an MCP server that wraps the site's public booking endpoints, and a skill that teaches Claude how to use it.
 
-## Bootstrap
-
-```bash
-gh repo create <your-project-name> --template perfectmind-core/perfectmind_template --public --clone
-cd <your-project-name>
-bash shell/bootstrap.sh <your-project-name>
-```
+**Current scope:** read-only listing of drop-in **lane swims** (Lane Swim and Endurance Lane Swim) for a given date. No login, no booking.
 
 ## Prerequisites
 
-- [uv](https://docs.astral.sh/uv/) — Python package manager
+- [uv](https://docs.astral.sh/uv/): the MCP server runs with `uv run`
+- Claude Code
 
-## Install
+## Install the plugin
+
+From GitHub (Claude Code 2.1.275 or later):
+
+```
+/plugin install perfectmind --marketplace lacuna-core/lacuna_perfectmind_plugin
+```
+
+On older versions: `/plugin marketplace add lacuna-core/lacuna_perfectmind_plugin`, then `/plugin install perfectmind@perfectmind`.
+
+From a local clone, for development:
 
 ```bash
-git clone <repo-url> your_project_name
-cd your_project_name
-uv sync --dev
-uv run pre-commit install   # runs ruff + mypy on every commit
+claude --plugin-dir /path/to/lacuna_perfectmind_plugin
+```
+
+Then ask, for example: *"Any lane swims at Cornell tomorrow evening?"*
+
+The plugin contains:
+
+| Path | Purpose |
+|------|---------|
+| `.claude-plugin/plugin.json` | Plugin manifest |
+| `.claude-plugin/marketplace.json` | Lets the repo act as a single-plugin marketplace |
+| `.mcp.json` | Starts the server: `uv run --directory ${CLAUDE_PLUGIN_ROOT} perfectmind mcp` (stdio) |
+| `skills/perfectmind-swims/SKILL.md` | Tells Claude when and how to call the tool |
+
+### MCP tools
+
+| Tool | Arguments | Returns |
+|------|-----------|---------|
+| `list_lane_swims` | `date` (YYYY-MM-DD), `location` (optional substring, e.g. `"Pan Am"`) | Sessions with start/end, location, address, pool, `status` (`open` / `full` / `not_open`), `spots_left`, `booking_url` |
+
+## CLI
+
+```bash
+uv run perfectmind swims lane --date 2026-11-05 --location cornell   # table of lane swims
+uv run perfectmind mcp                                               # run the MCP server on stdio
+uv run perfectmind version
+```
+
+To inspect the server interactively:
+
+```bash
+npx @modelcontextprotocol/inspector uv run perfectmind mcp
 ```
 
 ## Configure
 
-Copy `.env.example` to `.env` and set values:
+Copy `.env.example` to `.env` and set values (all optional):
 
 ```bash
 cp .env.example .env
@@ -33,12 +66,29 @@ cp .env.example .env
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LACUNA_LOG_LEVEL` | `INFO` | Logging verbosity (`DEBUG`, `INFO`, `WARNING`, `ERROR`) |
+| `LACUNA_LOG_LEVEL` | `INFO` | Logging verbosity (`DEBUG`, `INFO`, `WARNING`, `ERROR`). Logs go to stderr |
+| `LACUNA_BASE_URL` | `https://cityofmarkham.perfectmind.com` | PerfectMind tenant root |
+| `LACUNA_DROPIN_WIDGET_ID` | `6825ea71-…` | BookMe4 widget for "Drop-In Programs & Activities" |
+| `LACUNA_REQUEST_TIMEOUT` | `30` | HTTP timeout in seconds |
+| `LACUNA_USER_AGENT` | `perfectmind-claude-plugin/…` | User-Agent sent to the site |
 
-## Usage
+## How it works
+
+The site has no public API. The client calls the same anonymous JSON endpoints that the booking widget uses:
+
+1. `POST /Clients/BookMe4V2/GetCategoriesDataV2` finds the calendars in the drop-in widget and resolves "Swimming" by name.
+2. `GET /Clients/BookMe4BookingPagesV2/EventFilterGroupsV2` gets the filter groups: the published date range and the Program values (resolved by name, so anything matching "Lane Swim").
+3. `POST /Clients/BookMe4BookingPagesV2/ClassesV2` gets sessions, using a date-range filter for the single day plus the lane programs. Paging uses `after=<nextKey>`.
+
+Calendar and program IDs are resolved at runtime and never hard-coded. Filter groups are cached for an hour.
+
+## Install for development
 
 ```bash
-uv run perfectmind --help
+git clone git@github.com:lacuna-core/lacuna_perfectmind_plugin.git
+cd lacuna_perfectmind_plugin
+uv sync --dev
+uv run pre-commit install   # runs ruff + mypy on every commit
 ```
 
 ## Development
@@ -64,7 +114,12 @@ uv run mypy               # strict type-check
 `src/perfectmind/` is layered:
 
 - **`config.py`** — pydantic-settings with `LACUNA_` env prefix
+- **`client/`** — `PerfectMindClient` (thin async httpx wrapper over BookMe4 endpoints) and raw pydantic models
+- **`service/swims.py`** — `SwimService`: lane swim lookup by date and location, `SwimSession` output model
+- **`mcp/server.py`** — MCP server (`mcp` SDK 2.x `MCPServer`) and composition root
 - **`cli/app.py`** — Typer CLI; add sub-commands as `cli/<name>.py` and register via `app.add_typer(...)`
+
+Tests replay recorded responses from `tests/fixtures/` through `httpx.MockTransport` (see `tests/conftest.py`). MCP tools are tested in-process with `mcp.client.Client(server)`.
 
 See `CLAUDE.md` for coding conventions.
 
@@ -86,7 +141,7 @@ Releases are published to [GitHub Releases](../../releases). Each tag (`v*.*.*`)
 
 ### Cutting a release
 
-1. Update `version` in `pyproject.toml` and `src/perfectmind/__init__.py`.
+1. Update `version` in `pyproject.toml`, `src/perfectmind/__init__.py` and `.claude-plugin/plugin.json`.
 2. Commit: `chore: bump version to x.y.z`
 3. Tag: `git tag vx.y.z && git push origin vx.y.z`
 4. The Release workflow generates a draft release with notes from git-cliff — review and publish.

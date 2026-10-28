@@ -16,6 +16,10 @@ uv run ruff format                   # format
 uv run mypy                          # type-check (strict, src/ and tests/)
 
 uv run perfectmind --help                 # run the CLI
+uv run perfectmind swims lane -d 2026-11-05 -l cornell   # live lane swim lookup
+uv run perfectmind mcp                    # MCP server on stdio
+claude plugin validate .                  # validate plugin manifests
+claude --plugin-dir .                     # try the plugin locally
 ```
 
 ## Project structure
@@ -23,9 +27,16 @@ uv run perfectmind --help                 # run the CLI
 `src/perfectmind/` follows a layered structure:
 
 - **`config.py`** — frozen `Settings` (pydantic-settings, `LACUNA_` env prefix). Calls `load_dotenv()` at import time.
-- **`cli/app.py`** — Typer CLI. Sub-command groups live in separate files (e.g. `cli/foo.py`) and are registered via `app.add_typer(...)`.
+- **`client/`** — `PerfectMindClient(http, widget_id)`: one method per BookMe4 endpoint, no business logic. It takes an injected `httpx.AsyncClient` (with `base_url` set). `models.py` holds raw pydantic models (PascalCase aliases, `extra="ignore"`).
+- **`service/swims.py`** — `SwimService(client)`: resolves the "Swimming" calendar and the "Lane Swim" program filters **by name** (never hard-code tenant GUIDs), queries one day with the date-range filter, follows `nextKey`, and maps to `SwimSession`. Raises `SwimServiceError` for user-facing errors.
+- **`mcp/server.py`** — `build_server(service)` registers the tools on an `MCPServer` (mcp SDK **2.x**, not `FastMCP`). `run(settings)` is the composition root that builds the client from `Settings`. Tools convert `SwimServiceError` / `httpx.HTTPError` into `ToolError`.
+- **`cli/app.py`** — Typer CLI. Sub-command groups live in separate files (e.g. `cli/swims.py`) and are registered via `app.add_typer(...)`. `perfectmind mcp` runs the server on stdio.
 
-Logging is configured once in `__init__.py`: loguru handler removed and re-added with the level from `SETTINGS.log_level`. Set `LACUNA_LOG_LEVEL=DEBUG` to see debug output.
+Plugin layout (repo root): `.claude-plugin/plugin.json` + `marketplace.json`, `.mcp.json` (starts `uv run --directory ${CLAUDE_PLUGIN_ROOT} perfectmind mcp`), `skills/perfectmind-swims/SKILL.md`. When a tool's behaviour or arguments change, update the skill too.
+
+Logging is configured once in `__init__.py`: loguru handler removed and re-added with the level from `SETTINGS.log_level`. Set `LACUNA_LOG_LEVEL=DEBUG` to see debug output. Logs must go to **stderr**. stdout carries the MCP stdio protocol, so never `print()` in code reachable from `perfectmind mcp`.
+
+Tests: `tests/conftest.py` has a `FakeSite` that serves `tests/fixtures/*.json` (trimmed real responses) through `httpx.MockTransport`. MCP tools are tested in-process with `mcp.client.Client(build_server(service))`.
 
 ## Commit Message Convention
 
