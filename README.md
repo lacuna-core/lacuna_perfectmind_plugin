@@ -1,11 +1,11 @@
-# lacuna
+# perfectmind
 
 TODO: one-sentence project description.
 
 ## Bootstrap
 
 ```bash
-gh repo create <your-project-name> --template lacuna-core/lacuna_template --public --clone
+gh repo create <your-project-name> --template perfectmind-core/perfectmind_template --public --clone
 cd <your-project-name>
 bash shell/bootstrap.sh <your-project-name>
 ```
@@ -38,7 +38,7 @@ cp .env.example .env
 ## Usage
 
 ```bash
-uv run lacuna --help
+uv run perfectmind --help
 ```
 
 ## Development
@@ -61,7 +61,7 @@ uv run mypy               # strict type-check
 
 ### Project structure
 
-`src/lacuna/` is layered:
+`src/perfectmind/` is layered:
 
 - **`config.py`** — pydantic-settings with `LACUNA_` env prefix
 - **`cli/app.py`** — Typer CLI; add sub-commands as `cli/<name>.py` and register via `app.add_typer(...)`
@@ -86,7 +86,7 @@ Releases are published to [GitHub Releases](../../releases). Each tag (`v*.*.*`)
 
 ### Cutting a release
 
-1. Update `version` in `pyproject.toml` and `src/lacuna/__init__.py`.
+1. Update `version` in `pyproject.toml` and `src/perfectmind/__init__.py`.
 2. Commit: `chore: bump version to x.y.z`
 3. Tag: `git tag vx.y.z && git push origin vx.y.z`
 4. The Release workflow generates a draft release with notes from git-cliff — review and publish.

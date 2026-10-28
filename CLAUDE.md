@@ -15,12 +15,12 @@ uv run ruff check --fix              # lint with auto-fix
 uv run ruff format                   # format
 uv run mypy                          # type-check (strict, src/ and tests/)
 
-uv run lacuna --help                 # run the CLI
+uv run perfectmind --help                 # run the CLI
 ```
 
 ## Project structure
 
-`src/lacuna/` follows a layered structure:
+`src/perfectmind/` follows a layered structure:
 
 - **`config.py`** — frozen `Settings` (pydantic-settings, `LACUNA_` env prefix). Calls `load_dotenv()` at import time.
 - **`cli/app.py`** — Typer CLI. Sub-command groups live in separate files (e.g. `cli/foo.py`) and are registered via `app.add_typer(...)`.
@@ -57,5 +57,5 @@ All commits generated or suggested by Claude must conform to this spec.
 - Dependency injection: pass config explicitly to any client/service — never read the global `SETTINGS` inside library code.
 - mypy is strict. All functions including tests need return type annotations.
 - Git hooks (pre-commit) run ruff (fix + format) and mypy on every commit.
-- CLI lazy imports: in `cli/app.py`, `lacuna.*` imports must be inside the command function body, not at module level. `typer`, `rich`, and stdlib belong at the top of the file. This keeps `--help` fast and isolates heavy deps per command.
+- CLI lazy imports: in `cli/app.py`, `perfectmind.*` imports must be inside the command function body, not at module level. `typer`, `rich`, and stdlib belong at the top of the file. This keeps `--help` fast and isolates heavy deps per command.
 - **After every significant change** — new CLI command, new data pipeline, new dependency, changed directory layout — update `CLAUDE.md` (architecture / conventions) and `README.md` (user-facing instructions, dev setup, release process). Keep them in sync with the actual codebase.
