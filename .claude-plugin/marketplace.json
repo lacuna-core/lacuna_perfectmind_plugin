@@ -8,7 +8,7 @@
     {
       "name": "perfectmind",
       "source": "./",
-      "description": "Look up City of Markham drop-in programs (currently lane swims) on the PerfectMind booking site."
+      "description": "Look up City of Markham drop-in programs (currently lane, endurance lane and recreational swims) on the PerfectMind booking site."
     }
   ]
 }

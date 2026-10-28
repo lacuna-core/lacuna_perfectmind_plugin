@@ -2,7 +2,7 @@
 
 A Claude Code plugin for the [City of Markham PerfectMind booking site](https://cityofmarkham.perfectmind.com). It has an MCP server that wraps the site's public booking endpoints, and a skill that teaches Claude how to use it.
 
-**Current scope:** read-only listing of drop-in **lane swims** (Lane Swim and Endurance Lane Swim) for a given date. No login, no booking.
+**Current scope:** read-only listing of drop-in **swims** (Lane, Endurance Lane and Recreational Swim) for a given date, with each session labelled by type. No login, no booking.
 
 ## Prerequisites
 
@@ -23,9 +23,14 @@ From a local clone, for development:
 
 ```bash
 claude --plugin-dir /path/to/lacuna_perfectmind_plugin
+
+#or
+claude plugin marketplace add ./
+claude plugin install perfectmind@perfectmind
+
 ```
 
-Then ask, for example: *"Any lane swims at Cornell tomorrow evening?"*
+Then ask, for example: *"Any lane swims at Cornell tomorrow evening?"* or *"Rec swims on Saturday?"*
 
 The plugin contains:
 
@@ -40,12 +45,13 @@ The plugin contains:
 
 | Tool | Arguments | Returns |
 |------|-----------|---------|
-| `list_lane_swims` | `date` (YYYY-MM-DD), `location` (optional substring, e.g. `"Pan Am"`) | Sessions with start/end, location, address, pool, `status` (`open` / `full` / `not_open`), `spots_left`, `booking_url` |
+| `list_swims` | `date` (YYYY-MM-DD), `location` (optional substring, e.g. `"Pan Am"`), `swim_types` (optional subset of `lane`, `endurance_lane`, `recreational`) | Sessions with `swim_type`, program name, start/end, location, address, pool, `status` (`open` / `full` / `not_open`), `spots_left`, `booking_url` |
 
 ## CLI
 
 ```bash
-uv run perfectmind swims lane --date 2026-11-05 --location cornell   # table of lane swims
+uv run perfectmind swims list --date 2026-11-07 --location cornell   # all swim types
+uv run perfectmind swims list -d 2026-11-07 -t lane -t endurance_lane  # only lane swims
 uv run perfectmind mcp                                               # run the MCP server on stdio
 uv run perfectmind version
 ```
@@ -77,8 +83,8 @@ cp .env.example .env
 The site has no public API. The client calls the same anonymous JSON endpoints that the booking widget uses:
 
 1. `POST /Clients/BookMe4V2/GetCategoriesDataV2` finds the calendars in the drop-in widget and resolves "Swimming" by name.
-2. `GET /Clients/BookMe4BookingPagesV2/EventFilterGroupsV2` gets the filter groups: the published date range and the Program values (resolved by name, so anything matching "Lane Swim").
-3. `POST /Clients/BookMe4BookingPagesV2/ClassesV2` gets sessions, using a date-range filter for the single day plus the lane programs. Paging uses `after=<nextKey>`.
+2. `GET /Clients/BookMe4BookingPagesV2/EventFilterGroupsV2` gets the filter groups: the published date range and the Program values (resolved by name: "Endurance Lane Swim", "Lane Swim" and "Recreational Swim").
+3. `POST /Clients/BookMe4BookingPagesV2/ClassesV2` gets sessions, using a date-range filter for the single day plus the selected swim programs. Each session is labelled with a type from its event name. Paging uses `after=<nextKey>`.
 
 Calendar and program IDs are resolved at runtime and never hard-coded. Filter groups are cached for an hour.
 
@@ -115,7 +121,7 @@ uv run mypy               # strict type-check
 
 - **`config.py`** — pydantic-settings with `LACUNA_` env prefix
 - **`client/`** — `PerfectMindClient` (thin async httpx wrapper over BookMe4 endpoints) and raw pydantic models
-- **`service/swims.py`** — `SwimService`: lane swim lookup by date and location, `SwimSession` output model
+- **`service/swims.py`** — `SwimService`: swim lookup by date, location and type, `SwimSession` output model
 - **`mcp/server.py`** — MCP server (`mcp` SDK 2.x `MCPServer`) and composition root
 - **`cli/app.py`** — Typer CLI; add sub-commands as `cli/<name>.py` and register via `app.add_typer(...)`
 
